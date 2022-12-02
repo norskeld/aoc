@@ -21,7 +21,7 @@ const INPUT: &str = include_str!("input.txt");
 #[derive(Debug)]
 enum ParseError {
   ShapeError,
-  HandsError,
+  RoundError,
 }
 
 enum Outcome {
@@ -106,7 +106,7 @@ impl TryFrom<&[u8]> for Round {
           })
         }
       },
-      | _ => Err(ParseError::HandsError),
+      | _ => Err(ParseError::RoundError),
     }
   }
 }
