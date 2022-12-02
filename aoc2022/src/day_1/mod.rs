@@ -1,3 +1,7 @@
+//! [Day 1: Calorie Counting][link]
+//!
+//! [link]: https://adventofcode.com/2022/day/1
+
 const INPUT: &'static str = include_str!("input.txt");
 
 struct Calories<const N: usize> {
