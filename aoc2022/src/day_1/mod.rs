@@ -2,6 +2,8 @@
 //!
 //! [link]: https://adventofcode.com/2022/day/1
 
+use crate::Solution;
+
 const INPUT: &str = include_str!("input.txt");
 
 struct Calories<const N: usize> {
@@ -41,7 +43,7 @@ impl<const N: usize> FromIterator<u64> for Calories<N> {
   }
 }
 
-pub fn solve_for<const N: usize>(input: &str) -> u64 {
+fn solve<const N: usize>(input: &str) -> u64 {
   // Looks dirty, but works.
   input
     .split("\n\n")
@@ -56,10 +58,42 @@ pub fn solve_for<const N: usize>(input: &str) -> u64 {
     .sum()
 }
 
-pub fn solution() {
-  let part_one = solve_for::<1>(INPUT);
-  let part_two = solve_for::<3>(INPUT);
+pub fn solution() -> Solution<'static, u64, u64> {
+  Solution {
+    title: "Day 1: Calorie Counting",
+    part_one: solve::<1>(INPUT),
+    part_two: solve::<3>(INPUT),
+  }
+}
 
-  println!("part one: {part_one}");
-  println!("part two: {part_two}");
+#[cfg(test)]
+mod tests {
+  use super::*;
+
+  const SAMPLE: &str = indoc::indoc! {"
+    1000
+    2000
+    3000
+
+    4000
+
+    5000
+    6000
+
+    7000
+    8000
+    9000
+
+    10000
+  "};
+
+  #[test]
+  fn example_part_one() {
+    assert_eq!(solve::<1>(SAMPLE), 24000);
+  }
+
+  #[test]
+  fn example_part_two() {
+    assert_eq!(solve::<3>(SAMPLE), 45000);
+  }
 }
