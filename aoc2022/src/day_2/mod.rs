@@ -62,8 +62,8 @@ impl Shape {
   }
 
   /// Calculates the [Outcome] of crossing [Shape] (self) with another [Shape].
-  fn to_outcome(&self, other: &Self) -> Outcome {
-    if self == other {
+  fn to_outcome(self, other: &Self) -> Outcome {
+    if self == *other {
       Outcome::Draw
     } else {
       match (self, other) {
