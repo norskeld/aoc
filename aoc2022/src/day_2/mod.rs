@@ -48,11 +48,29 @@ enum Shape {
 }
 
 impl Shape {
-  fn get_score(&self) -> u64 {
+  pub fn get_score(&self) -> u64 {
     match self {
       | Shape::Rock => 1,
       | Shape::Paper => 2,
       | Shape::Scissors => 3,
+    }
+  }
+
+  pub fn outcome(&self, other: &Self) -> Outcome {
+    if self == other {
+      Outcome::Draw
+    } else {
+      match (self, other) {
+        | (Shape::Rock, Shape::Paper) => Outcome::Win,
+        | (Shape::Rock, Shape::Scissors) => Outcome::Loss,
+        | (Shape::Paper, Shape::Rock) => Outcome::Loss,
+        | (Shape::Paper, Shape::Scissors) => Outcome::Win,
+        | (Shape::Scissors, Shape::Rock) => Outcome::Win,
+        | (Shape::Scissors, Shape::Paper) => Outcome::Loss,
+        | _ => {
+          unreachable!("This branch is unreachable since other cases where checked and eliminated.")
+        },
+      }
     }
   }
 }
@@ -84,31 +102,12 @@ impl TryFrom<&[u8]> for Round {
         let left = Shape::try_from(left)?;
         let right = Shape::try_from(right)?;
 
-        if left == right {
-          Ok(Round {
-            outcome: Outcome::Draw,
-            shape: right,
-          })
-        } else {
-          let outcome = match (left, right) {
-            | (Shape::Rock, Shape::Paper) => Outcome::Win,
-            | (Shape::Rock, Shape::Scissors) => Outcome::Loss,
-            | (Shape::Paper, Shape::Rock) => Outcome::Loss,
-            | (Shape::Paper, Shape::Scissors) => Outcome::Win,
-            | (Shape::Scissors, Shape::Rock) => Outcome::Win,
-            | (Shape::Scissors, Shape::Paper) => Outcome::Loss,
-            | _ => {
-              unreachable!(
-                "This branch is unreachable since other cases where checked and eliminated."
-              )
-            },
-          };
+        let outcome = left.outcome(&right);
 
-          Ok(Round {
-            outcome,
-            shape: right,
-          })
-        }
+        Ok(Round {
+          outcome,
+          shape: right,
+        })
       },
       | _ => Err(ParseError::RoundError),
     }
