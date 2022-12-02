@@ -97,7 +97,11 @@ impl TryFrom<&[u8]> for Round {
             | (Shape::Paper, Shape::Scissors) => Outcome::Win,
             | (Shape::Scissors, Shape::Rock) => Outcome::Win,
             | (Shape::Scissors, Shape::Paper) => Outcome::Loss,
-            | _ => unreachable!("This branch is unreachable since other cases where checked and eliminated right before this.")
+            | _ => {
+              unreachable!(
+                "This branch is unreachable since other cases where checked and eliminated."
+              )
+            },
           };
 
           Ok(Round {
