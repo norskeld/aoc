@@ -1,0 +1,8 @@
+[workspace]
+members = ["aoc2022"]
+
+[profile.release]
+lto = "thin"
+opt-level = "s"
+panic = "abort"
+debug = false
