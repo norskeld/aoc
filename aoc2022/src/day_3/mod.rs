@@ -1,6 +1,9 @@
-///! [Day 3: Rucksack Reorganization][link]
-///
-/// [link]: https://adventofcode.com/2022/day/3
+//! [Day 3: Rucksack Reorganization][link]
+//!
+//! Damn elves... HR department was slacking for sure when was hiring those little careless blokes.
+//!
+//! [link]: https://adventofcode.com/2022/day/3
+
 use std::collections::{HashMap, HashSet};
 use std::ops::RangeInclusive;
 
