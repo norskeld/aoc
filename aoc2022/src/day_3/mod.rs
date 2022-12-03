@@ -8,7 +8,14 @@ use crate::Solution;
 
 const INPUT: &str = include_str!("input.txt");
 
-fn build_priorities(range: RangeInclusive<char>, start: usize) -> HashMap<char, u64> {
+type CharSet = HashSet<char>;
+type PriorityMap = HashMap<char, u64>;
+
+fn to_charset(s: &str) -> CharSet {
+  s.chars().collect()
+}
+
+fn build_priorities(range: RangeInclusive<char>, start: usize) -> PriorityMap {
   range
     .enumerate()
     .fold(HashMap::new(), |mut acc, (index, ch)| {
@@ -17,7 +24,7 @@ fn build_priorities(range: RangeInclusive<char>, start: usize) -> HashMap<char, 
     })
 }
 
-fn resolve_priority(ch: char, lc_map: &HashMap<char, u64>, uc_map: &HashMap<char, u64>) -> u64 {
+fn resolve_priority(ch: char, lc_map: &PriorityMap, uc_map: &PriorityMap) -> u64 {
   if ch.is_ascii_lowercase() {
     lc_map[&ch]
   } else {
@@ -30,22 +37,19 @@ fn solve_part_one(s: &str) -> u64 {
   let uc_priorities = build_priorities('A'..='Z', 27);
 
   s.lines()
-    .into_iter()
     .map(|line| {
       // Every line seems to has even length, so split in half is okay I guess...
       let (left, right) = line.split_at(line.len() / 2);
 
       // Get unique chars in each compartment to find intersecting chars next.
-      let left = left.chars().collect::<HashSet<char>>();
-      let right = right.chars().collect::<HashSet<char>>();
+      let left = to_charset(left);
+      let right = to_charset(right);
 
       // Find inresecting chars (duplicates) and get their priorities from maps.
-      let priority: u64 = left
+      left
         .intersection(&right)
         .map(|ch| resolve_priority(*ch, &lc_priorities, &uc_priorities))
-        .sum();
-
-      priority
+        .sum::<u64>()
     })
     .fold(0, |mut acc, priority| {
       acc += priority;
@@ -53,8 +57,40 @@ fn solve_part_one(s: &str) -> u64 {
     })
 }
 
-fn solve_part_two(_s: &str) -> u64 {
-  0
+fn solve_part_two(s: &str) -> u64 {
+  let lc_priorities = build_priorities('a'..='z', 1);
+  let uc_priorities = build_priorities('A'..='Z', 27);
+
+  let lines = s.lines().collect::<Vec<_>>();
+
+  lines
+    // Split a vector of lines into chunks of 3 elements (elves).
+    .chunks(3)
+    // I guess it's better to panic instead, but w/e.
+    .filter_map(|groups| {
+      match *groups {
+        // Man I freaking love slice patterns.
+        | [first, second, third] => {
+          vec![first, second, third]
+            .into_iter()
+            .map(to_charset)
+            // I'm not happy with `copied`, but w/e, it's `char`s being copied, so not a big deal.
+            .reduce(|acc, set| acc.intersection(&set).copied().collect::<CharSet>())
+            // This piece is cringeworthy as well.
+            .map(|set| {
+              set
+                .into_iter()
+                .map(|ch| resolve_priority(ch, &lc_priorities, &uc_priorities))
+                .sum::<u64>()
+            })
+        },
+        | _ => None,
+      }
+    })
+    .fold(0, |mut acc, priority| {
+      acc += priority;
+      acc
+    })
 }
 
 pub fn solution<'s>() -> Solution<'s, u64, u64> {
@@ -74,10 +110,12 @@ mod tests {
   #[test]
   fn test_examples() {
     assert_eq!(solve_part_one(EXAMPLE), 157);
+    assert_eq!(solve_part_two(EXAMPLE), 70);
   }
 
   #[test]
   fn test_input() {
     assert_eq!(solve_part_one(INPUT), 7446);
+    assert_eq!(solve_part_two(INPUT), 2646)
   }
 }
