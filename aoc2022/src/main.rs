@@ -1,5 +1,6 @@
 mod day_1;
 mod day_2;
+mod day_3;
 
 use std::fmt::Display;
 
@@ -34,7 +35,7 @@ where
 }
 
 fn main() {
-  let solutions = vec![day_1::solution(), day_2::solution()];
+  let solutions = vec![day_1::solution(), day_2::solution(), day_3::solution()];
 
   for solution in solutions.iter() {
     solution.print();
