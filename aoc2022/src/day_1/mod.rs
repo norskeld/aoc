@@ -50,7 +50,7 @@ fn solve<const N: usize>(input: &str) -> u64 {
     .map(|elf| {
       elf
         .lines()
-        .map(|line| u64::from(line.parse::<u32>().unwrap_or_default()))
+        .map(|line| line.parse::<u64>().unwrap_or_default())
         .sum()
     })
     // Just playing around with const generics and iterators...
@@ -70,30 +70,17 @@ pub fn solution() -> Solution<'static, u64, u64> {
 mod tests {
   use super::*;
 
-  const SAMPLE: &str = indoc::indoc! {"
-    1000
-    2000
-    3000
-
-    4000
-
-    5000
-    6000
-
-    7000
-    8000
-    9000
-
-    10000
-  "};
+  const EXAMPLE: &str = include_str!("example.txt");
 
   #[test]
-  fn example_part_one() {
-    assert_eq!(solve::<1>(SAMPLE), 24000);
+  fn test_examples() {
+    assert_eq!(solve::<1>(EXAMPLE), 24000);
+    assert_eq!(solve::<3>(EXAMPLE), 45000);
   }
 
   #[test]
-  fn example_part_two() {
-    assert_eq!(solve::<3>(SAMPLE), 45000);
+  fn test_input() {
+    assert_eq!(solve::<1>(INPUT), 70374);
+    assert_eq!(solve::<3>(INPUT), 204610);
   }
 }

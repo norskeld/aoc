@@ -201,19 +201,17 @@ pub fn solution() -> Solution<'static, u64, u64> {
 mod tests {
   use super::*;
 
-  const SAMPLE: &str = indoc::indoc! {"
-      A Y
-      B X
-      C Z
-    "};
+  const EXAMPLE: &str = include_str!("example.txt");
 
   #[test]
-  fn example_part_one() {
-    assert_eq!(solve_part_one(SAMPLE), 15);
+  fn test_examples() {
+    assert_eq!(solve_part_one(EXAMPLE), 15);
+    assert_eq!(solve_part_two(EXAMPLE), 12);
   }
 
   #[test]
-  fn example_part_two() {
-    assert_eq!(solve_part_two(SAMPLE), 12);
+  fn test_input() {
+    assert_eq!(solve_part_one(INPUT), 11063);
+    assert_eq!(solve_part_two(INPUT), 10349);
   }
 }
