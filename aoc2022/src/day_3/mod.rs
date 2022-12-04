@@ -18,6 +18,13 @@ fn to_charset(s: &str) -> CharSet {
   s.chars().collect()
 }
 
+fn priorities() -> (PriorityMap, PriorityMap) {
+  (
+    build_priorities('a'..='z', 1),
+    build_priorities('A'..='Z', 27),
+  )
+}
+
 fn build_priorities(range: RangeInclusive<char>, start: usize) -> PriorityMap {
   range
     .enumerate()
@@ -36,8 +43,7 @@ fn resolve_priority(ch: char, lc_map: &PriorityMap, uc_map: &PriorityMap) -> u64
 }
 
 fn solve_part_one(s: &str) -> u64 {
-  let lc_priorities = build_priorities('a'..='z', 1);
-  let uc_priorities = build_priorities('A'..='Z', 27);
+  let (lc_priorities, uc_priorities) = priorities();
 
   s.lines()
     .map(|line| {
@@ -61,8 +67,7 @@ fn solve_part_one(s: &str) -> u64 {
 }
 
 fn solve_part_two(s: &str) -> u64 {
-  let lc_priorities = build_priorities('a'..='z', 1);
-  let uc_priorities = build_priorities('A'..='Z', 27);
+  let (lc_priorities, uc_priorities) = priorities();
 
   let lines = s.lines().collect::<Vec<_>>();
 
