@@ -189,7 +189,7 @@ fn solve_part_two(input: &str) -> u64 {
   output.result
 }
 
-pub fn solution() -> Solution<'static, u64, u64> {
+pub fn solution<'s>() -> Solution<'s, u64, u64> {
   Solution {
     title: "Day 2: Rock Paper Scissors",
     part_one: solve_part_one(INPUT),
