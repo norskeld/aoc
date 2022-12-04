@@ -162,6 +162,6 @@ mod tests {
   #[test]
   fn test_input() {
     assert_eq!(solve::<true>(INPUT), 536);
-    assert_eq!(solve::<false>(INPUT), 536);
+    assert_eq!(solve::<false>(INPUT), 845);
   }
 }
