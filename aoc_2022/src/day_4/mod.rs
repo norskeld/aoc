@@ -7,7 +7,7 @@
 
 use std::{ops::RangeInclusive, str::FromStr};
 
-use crate::Solution;
+use aoc::Solution;
 
 const INPUT: &str = include_str!("input.txt");
 

@@ -2,7 +2,7 @@
 //!
 //! [link]: https://adventofcode.com/2022/day/1
 
-use crate::Solution;
+use aoc::Solution;
 
 const INPUT: &str = include_str!("input.txt");
 
