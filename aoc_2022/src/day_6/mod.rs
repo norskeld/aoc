@@ -2,8 +2,6 @@
 //!
 //! [link]: https://adventofcode.com/2022/day/6
 
-use std::str;
-
 use aoc::Solution;
 
 const INPUT: &str = include_str!("input.txt");
