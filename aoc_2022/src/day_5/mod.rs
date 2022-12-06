@@ -22,7 +22,7 @@ impl Crates {
     line
       .as_bytes()
       .chunks(4)
-      .map(std::str::from_utf8)
+      .map(str::from_utf8)
       .map(Result::unwrap)
       .map(|chunk| {
         chunk
