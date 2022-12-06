@@ -9,9 +9,7 @@ const INPUT: &str = include_str!("input.txt");
 fn solve<const N: usize>(s: &str) -> usize {
   s.as_bytes()
     .windows(N)
-    .position(|chunk| {
-      (1..chunk.len()).all(move |cursor| !chunk[cursor..].contains(&chunk[cursor - 1]))
-    })
+    .position(|chunk| (1..chunk.len()).all(|cursor| !chunk[cursor..].contains(&chunk[cursor - 1])))
     .map(|pos| pos + N)
     .unwrap_or_default()
 }
