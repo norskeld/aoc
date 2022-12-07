@@ -2,16 +2,9 @@
 //!
 //! Overengineered the hell out of it. But it works!
 //!
-//! ## Note
-//!
-//! `M` is a const generic that switches between puzzle parts:
-//!
-//! - `true` is for the part 1;
-//! - `false` is for the part 2.
-//!
 //! [link]: https://adventofcode.com/2022/day/2
 
-use aoc::Solution;
+use aoc::{Part, Solution};
 
 const INPUT: &str = include_str!("input.txt");
 
@@ -104,32 +97,32 @@ impl TryFrom<&u8> for Shape {
   }
 }
 
-struct Round<const M: bool> {
+struct Round<const P: Part> {
   shape: Shape,
   outcome: Outcome,
 }
 
-impl<const M: bool> TryFrom<&[u8]> for Round<M> {
+impl<const P: Part> TryFrom<&[u8]> for Round<P> {
   type Error = ParseError;
 
   fn try_from(s: &[u8]) -> Result<Self, ParseError> {
     match s {
       | [left, .., right] => {
-        // Part 1.
-        let (shape, outcome) = if M {
-          let opponent = Shape::try_from(left)?;
-          let shape = Shape::try_from(right)?;
-          let outcome = opponent.to_outcome(&shape);
+        let (shape, outcome) = match P {
+          | Part::One => {
+            let opponent = Shape::try_from(left)?;
+            let shape = Shape::try_from(right)?;
+            let outcome = opponent.to_outcome(&shape);
 
-          (shape, outcome)
-        }
-        // Part 2.
-        else {
-          let outcome = Outcome::try_from(right)?;
-          let opponent = Shape::try_from(left)?;
-          let shape = opponent.with_outcome(&outcome);
+            (shape, outcome)
+          },
+          | Part::Two => {
+            let outcome = Outcome::try_from(right)?;
+            let opponent = Shape::try_from(left)?;
+            let shape = opponent.with_outcome(&outcome);
 
-          (shape, outcome)
+            (shape, outcome)
+          },
         };
 
         Ok(Round { shape, outcome })
@@ -144,10 +137,10 @@ struct Output {
   result: usize,
 }
 
-impl<const M: bool> FromIterator<Round<M>> for Output {
+impl<const P: Part> FromIterator<Round<P>> for Output {
   fn from_iter<I>(it: I) -> Self
   where
-    I: IntoIterator<Item = Round<M>>,
+    I: IntoIterator<Item = Round<P>>,
   {
     it.into_iter()
       .fold(Self::default(), |mut acc, Round { outcome, shape }| {
@@ -157,11 +150,11 @@ impl<const M: bool> FromIterator<Round<M>> for Output {
   }
 }
 
-fn solve<const M: bool>(input: &str) -> usize {
+fn solve<const P: Part>(input: &str) -> usize {
   let output = input
     .lines()
     .map(str::as_bytes)
-    .map(Round::<M>::try_from)
+    .map(Round::<P>::try_from)
     .map(Result::unwrap)
     .collect::<Output>();
 
@@ -171,8 +164,8 @@ fn solve<const M: bool>(input: &str) -> usize {
 pub fn solution<'s>() -> Solution<'s, usize, usize> {
   Solution {
     title: "Day 2: Rock Paper Scissors",
-    part_one: solve::<true>(INPUT),
-    part_two: solve::<false>(INPUT),
+    part_one: solve::<{ Part::One }>(INPUT),
+    part_two: solve::<{ Part::Two }>(INPUT),
   }
 }
 
@@ -184,13 +177,13 @@ mod tests {
 
   #[test]
   fn test_examples() {
-    assert_eq!(solve::<true>(EXAMPLE), 15);
-    assert_eq!(solve::<false>(EXAMPLE), 12);
+    assert_eq!(solve::<{ Part::One }>(EXAMPLE), 15);
+    assert_eq!(solve::<{ Part::Two }>(EXAMPLE), 12);
   }
 
   #[test]
   fn test_input() {
-    assert_eq!(solve::<true>(INPUT), 11063);
-    assert_eq!(solve::<false>(INPUT), 10349);
+    assert_eq!(solve::<{ Part::One }>(INPUT), 11063);
+    assert_eq!(solve::<{ Part::Two }>(INPUT), 10349);
   }
 }

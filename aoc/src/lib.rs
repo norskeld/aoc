@@ -6,6 +6,19 @@ pub trait Printable {
   fn print(&self);
 }
 
+/// This enum is mostly for usage in const generics. This is nightly only + uncompleted feature, so
+/// requires:
+///
+/// ```ignore
+/// #![allow(incomplete_features)]
+/// #![feature(adt_const_params)]
+/// ```
+#[derive(PartialEq, Eq)]
+pub enum Part {
+  One,
+  Two,
+}
+
 pub struct Solution<'s, O: Display, T: Display> {
   pub title: &'s str,
   pub part_one: O,

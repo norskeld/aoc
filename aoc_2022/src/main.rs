@@ -1,3 +1,5 @@
+#![allow(incomplete_features)]
+#![feature(adt_const_params)]
 #![feature(box_syntax)]
 
 use aoc::Printable;
