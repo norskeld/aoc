@@ -5,7 +5,7 @@
 use std::mem;
 use std::str;
 
-use aoc::Solution;
+use aoc::{Part, Solution};
 
 const INPUT: &str = include_str!("input.txt");
 
@@ -84,7 +84,6 @@ impl Crates {
   }
 }
 
-#[derive(Debug)]
 struct Move {
   stack: usize,
   from: usize,
@@ -107,7 +106,7 @@ impl Move {
   }
 }
 
-fn solve<const M: bool>(s: &str) -> String {
+fn solve<const P: Part>(s: &str) -> String {
   let mut lines = s.lines();
 
   let mut crates = lines
@@ -119,20 +118,17 @@ fn solve<const M: bool>(s: &str) -> String {
 
   let mut it = lines.filter(|s| !s.is_empty()).map(Move::from_line);
 
-  if M {
-    it.by_ref().fold(&mut crates, Crates::run);
-  } else {
-    it.by_ref().fold(&mut crates, Crates::run_preserving);
+  match P {
+    | Part::One => it.by_ref().fold(&mut crates, Crates::run).top(),
+    | Part::Two => it.by_ref().fold(&mut crates, Crates::run_preserving).top(),
   }
-
-  crates.top()
 }
 
 pub fn solution<'s>() -> Solution<'s, String, String> {
   Solution {
     title: "Day 5: Supply Stacks",
-    part_one: solve::<true>(INPUT),
-    part_two: solve::<false>(INPUT),
+    part_one: solve::<{ Part::One }>(INPUT),
+    part_two: solve::<{ Part::Two }>(INPUT),
   }
 }
 
@@ -144,13 +140,13 @@ mod tests {
 
   #[test]
   fn test_examples() {
-    assert_eq!(solve::<true>(EXAMPLE), "CMZ".to_string());
-    assert_eq!(solve::<false>(EXAMPLE), "MCD".to_string());
+    assert_eq!(solve::<{ Part::One }>(EXAMPLE), "CMZ".to_string());
+    assert_eq!(solve::<{ Part::Two }>(EXAMPLE), "MCD".to_string());
   }
 
   #[test]
   fn test_input() {
-    assert_eq!(solve::<true>(INPUT), "ZRLJGSCTR".to_string());
-    assert_eq!(solve::<false>(INPUT), "PRTTGRFPB".to_string());
+    assert_eq!(solve::<{ Part::One }>(INPUT), "ZRLJGSCTR".to_string());
+    assert_eq!(solve::<{ Part::Two }>(INPUT), "PRTTGRFPB".to_string());
   }
 }
