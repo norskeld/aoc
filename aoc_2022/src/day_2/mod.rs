@@ -1,6 +1,13 @@
 //! [Day 2: Rock Paper Scissors][link]
 //!
-//!  Overengineered the hell out of it. But it works!
+//! Overengineered the hell out of it. But it works!
+//!
+//! ## Note
+//!
+//! `M` is a const generic that switches between puzzle parts:
+//!
+//! - `true` is for the part 1;
+//! - `false` is for the part 2.
 //!
 //! [link]: https://adventofcode.com/2022/day/2
 
@@ -17,19 +24,9 @@ enum ParseError {
 
 #[derive(Debug, PartialEq)]
 enum Outcome {
-  Loss,
-  Draw,
-  Win,
-}
-
-impl Outcome {
-  pub fn get_score(&self) -> u64 {
-    match self {
-      | Outcome::Loss => 0,
-      | Outcome::Draw => 3,
-      | Outcome::Win => 6,
-    }
-  }
+  Loss = 0,
+  Draw = 3,
+  Win = 6,
 }
 
 impl TryFrom<&u8> for Outcome {
@@ -47,20 +44,12 @@ impl TryFrom<&u8> for Outcome {
 
 #[derive(Copy, Clone, Debug, PartialEq)]
 enum Shape {
-  Rock,
-  Paper,
-  Scissors,
+  Rock = 1,
+  Paper = 2,
+  Scissors = 3,
 }
 
 impl Shape {
-  fn get_score(&self) -> u64 {
-    match self {
-      | Shape::Rock => 1,
-      | Shape::Paper => 2,
-      | Shape::Scissors => 3,
-    }
-  }
-
   /// Calculates the [Outcome] of crossing [Shape] (self) with another [Shape].
   fn to_outcome(self, other: &Self) -> Outcome {
     if self == *other {
@@ -115,31 +104,33 @@ impl TryFrom<&u8> for Shape {
   }
 }
 
-struct Round {
+struct Round<const M: bool> {
   shape: Shape,
   outcome: Outcome,
 }
 
-impl Round {
-  fn try_from_one(s: &[u8]) -> Result<Self, ParseError> {
+impl<const M: bool> TryFrom<&[u8]> for Round<M> {
+  type Error = ParseError;
+
+  fn try_from(s: &[u8]) -> Result<Self, ParseError> {
     match s {
       | [left, .., right] => {
-        let opponent = Shape::try_from(left)?;
-        let shape = Shape::try_from(right)?;
-        let outcome = opponent.to_outcome(&shape);
+        // Part 1.
+        let (shape, outcome) = if M {
+          let opponent = Shape::try_from(left)?;
+          let shape = Shape::try_from(right)?;
+          let outcome = opponent.to_outcome(&shape);
 
-        Ok(Round { shape, outcome })
-      },
-      | _ => Err(ParseError::InvalidRound),
-    }
-  }
+          (shape, outcome)
+        }
+        // Part 2.
+        else {
+          let outcome = Outcome::try_from(right)?;
+          let opponent = Shape::try_from(left)?;
+          let shape = opponent.with_outcome(&outcome);
 
-  fn try_from_two(s: &[u8]) -> Result<Self, ParseError> {
-    match s {
-      | [left, .., right] => {
-        let outcome = Outcome::try_from(right)?;
-        let opponent = Shape::try_from(left)?;
-        let shape = opponent.with_outcome(&outcome);
+          (shape, outcome)
+        };
 
         Ok(Round { shape, outcome })
       },
@@ -148,52 +139,40 @@ impl Round {
   }
 }
 
+#[derive(Default)]
 struct Output {
-  result: u64,
+  result: usize,
 }
 
-impl Output {
-  pub fn new() -> Self {
-    Self { result: 0 }
-  }
-}
-
-impl FromIterator<Round> for Output {
+impl<const M: bool> FromIterator<Round<M>> for Output {
   fn from_iter<I>(it: I) -> Self
   where
-    I: IntoIterator<Item = Round>,
+    I: IntoIterator<Item = Round<M>>,
   {
     it.into_iter()
-      .fold(Self::new(), |mut acc, Round { outcome, shape }| {
-        acc.result += outcome.get_score() + shape.get_score();
+      .fold(Self::default(), |mut acc, Round { outcome, shape }| {
+        acc.result += outcome as usize + shape as usize;
         acc
       })
   }
 }
 
-fn solve_part_one(input: &str) -> u64 {
+fn solve<const M: bool>(input: &str) -> usize {
   let output = input
     .lines()
-    .filter_map(|line| Round::try_from_one(line.as_bytes()).ok())
+    .map(str::as_bytes)
+    .map(Round::<M>::try_from)
+    .map(Result::unwrap)
     .collect::<Output>();
 
   output.result
 }
 
-fn solve_part_two(input: &str) -> u64 {
-  let output = input
-    .lines()
-    .filter_map(|line| Round::try_from_two(line.as_bytes()).ok())
-    .collect::<Output>();
-
-  output.result
-}
-
-pub fn solution<'s>() -> Solution<'s, u64, u64> {
+pub fn solution<'s>() -> Solution<'s, usize, usize> {
   Solution {
     title: "Day 2: Rock Paper Scissors",
-    part_one: solve_part_one(INPUT),
-    part_two: solve_part_two(INPUT),
+    part_one: solve::<true>(INPUT),
+    part_two: solve::<false>(INPUT),
   }
 }
 
@@ -205,13 +184,13 @@ mod tests {
 
   #[test]
   fn test_examples() {
-    assert_eq!(solve_part_one(EXAMPLE), 15);
-    assert_eq!(solve_part_two(EXAMPLE), 12);
+    assert_eq!(solve::<true>(EXAMPLE), 15);
+    assert_eq!(solve::<false>(EXAMPLE), 12);
   }
 
   #[test]
   fn test_input() {
-    assert_eq!(solve_part_one(INPUT), 11063);
-    assert_eq!(solve_part_two(INPUT), 10349);
+    assert_eq!(solve::<true>(INPUT), 11063);
+    assert_eq!(solve::<false>(INPUT), 10349);
   }
 }
