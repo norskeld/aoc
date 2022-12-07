@@ -5,9 +5,10 @@
 //!
 //! [link]: https://adventofcode.com/2022/day/4
 
-use std::{ops::RangeInclusive, str::FromStr};
+use std::ops::RangeInclusive;
+use std::str::FromStr;
 
-use aoc::Solution;
+use aoc::{Part, Solution};
 
 const INPUT: &str = include_str!("input.txt");
 
@@ -28,21 +29,22 @@ trait SplittableTo {
   }
 }
 
+#[derive(Debug)]
 enum ParseError {
   InvalidAssignment,
   InvalidPair,
 }
 
-struct Pair(u64, u64);
+struct Pair(usize, usize);
 
 impl SplittableTo for Pair {}
 
 impl Pair {
-  fn from_tuple((start, end): (u64, u64)) -> Pair {
+  fn from_tuple((start, end): (usize, usize)) -> Pair {
     Pair(start, end)
   }
 
-  fn to_range_inc(&self) -> RangeInclusive<u64> {
+  fn to_range_inc(&self) -> RangeInclusive<usize> {
     self.0..=self.1
   }
 
@@ -99,51 +101,45 @@ impl FromStr for Assignment {
   }
 }
 
-struct Output<const M: bool> {
-  result: u64,
+#[derive(Default)]
+struct Output<const P: Part> {
+  result: usize,
 }
 
-impl<const M: bool> Output<M> {
-  const fn new() -> Self {
-    Output { result: 0 }
-  }
-}
-
-impl<const M: bool> FromIterator<Assignment> for Output<M> {
+impl<const P: Part> FromIterator<Assignment> for Output<P> {
   fn from_iter<I>(it: I) -> Self
   where
     I: IntoIterator<Item = Assignment>,
   {
     it.into_iter()
-      .fold(Self::new(), |mut acc, Assignment(first, second)| {
-        let add = match M {
-          | true => first.subsumes(&second),
-          | false => first.overlaps(&second),
+      .fold(Self::default(), |mut acc, Assignment(first, second)| {
+        let add = match P {
+          | Part::One => first.subsumes(&second),
+          | Part::Two => first.overlaps(&second),
         };
 
-        acc.result += add as u64;
+        acc.result += add as usize;
         acc
       })
   }
 }
 
-fn solve<const M: bool>(s: &str) -> u64 {
+fn solve<const P: Part>(s: &str) -> usize {
   let output = s
     .lines()
     .into_iter()
-    .filter_map(|line| line.parse::<Assignment>().ok())
-    .collect::<Output<M>>();
+    .map(str::parse::<Assignment>)
+    .map(Result::unwrap)
+    .collect::<Output<P>>();
 
   output.result
 }
 
-/// `M` is a const generic that acts as a binary switch. It is needed to select which method to
-/// invoke on [Pair]s: either `subsumes` (when `true`) or `overlaps` (when `false`).
-pub fn solution<'s>() -> Solution<'s, u64, u64> {
+pub fn solution<'s>() -> Solution<'s, usize, usize> {
   Solution {
     title: "Day 4: Camp Cleanup",
-    part_one: solve::<true>(INPUT),
-    part_two: solve::<false>(INPUT),
+    part_one: solve::<{ Part::One }>(INPUT),
+    part_two: solve::<{ Part::Two }>(INPUT),
   }
 }
 
@@ -155,13 +151,13 @@ mod tests {
 
   #[test]
   fn test_examples() {
-    assert_eq!(solve::<true>(EXAMPLE), 2);
-    assert_eq!(solve::<false>(EXAMPLE), 4);
+    assert_eq!(solve::<{ Part::One }>(EXAMPLE), 2);
+    assert_eq!(solve::<{ Part::Two }>(EXAMPLE), 4);
   }
 
   #[test]
   fn test_input() {
-    assert_eq!(solve::<true>(INPUT), 536);
-    assert_eq!(solve::<false>(INPUT), 845);
+    assert_eq!(solve::<{ Part::One }>(INPUT), 536);
+    assert_eq!(solve::<{ Part::Two }>(INPUT), 845);
   }
 }
