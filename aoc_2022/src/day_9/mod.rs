@@ -31,11 +31,11 @@ enum Move {
 
 impl Move {
   fn to_coords(&self) -> Vec<Coords> {
-    match self {
-      | Move::Up(steps) => vec![(0, 1); *steps],
-      | Move::Down(steps) => vec![(0, -1); *steps],
-      | Move::Left(steps) => vec![(-1, 0); *steps],
-      | Move::Right(steps) => vec![(1, 0); *steps],
+    match *self {
+      | Move::Up(steps) => vec![(0, 1); steps],
+      | Move::Down(steps) => vec![(0, -1); steps],
+      | Move::Left(steps) => vec![(-1, 0); steps],
+      | Move::Right(steps) => vec![(1, 0); steps],
     }
   }
 }
