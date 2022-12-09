@@ -12,6 +12,7 @@ mod day_5;
 mod day_6;
 mod day_7;
 mod day_8;
+mod day_9;
 
 fn main() {
   let solutions: Vec<Box<dyn Printable>> = vec![
@@ -23,6 +24,7 @@ fn main() {
     box day_6::solution(),
     box day_7::solution(),
     box day_8::solution(),
+    box day_9::solution(),
   ];
 
   aoc::print_solutions(&solutions);
