@@ -95,6 +95,7 @@ fn scenic_score(grid: &Grid, height: usize, pos: Pair<usize>, bounds: Pair<usize
     }
   }
 
+  #[allow(clippy::needless_range_loop)]
   for k in row + 1..rows {
     bottom += 1;
 
