@@ -17,9 +17,9 @@ type Coords = (isize, isize);
 
 #[derive(Debug)]
 enum ParseError {
-  InvalidMove,
-  InvalidSteps,
-  InvalidDirection,
+  Move,
+  Steps,
+  Direction,
 }
 
 enum Move {
@@ -44,23 +44,21 @@ impl FromStr for Move {
   type Err = ParseError;
 
   fn from_str(s: &str) -> Result<Self, Self::Err> {
-    match s.trim().split_once(" ") {
+    match s.trim().split_once(' ') {
       | Some((direction, steps)) => {
-        let steps = steps
-          .parse::<usize>()
-          .map_err(|_| ParseError::InvalidSteps)?;
+        let steps = steps.parse::<usize>().map_err(|_| ParseError::Steps)?;
 
         let move_ = match direction {
           | "U" => Move::Up(steps),
           | "D" => Move::Down(steps),
           | "L" => Move::Left(steps),
           | "R" => Move::Right(steps),
-          | _ => return Err(ParseError::InvalidDirection),
+          | _ => return Err(ParseError::Direction),
         };
 
         Ok(move_)
       },
-      | None => Err(ParseError::InvalidMove),
+      | None => Err(ParseError::Move),
     }
   }
 }
@@ -71,7 +69,7 @@ fn process(moves: &[Move], rope_len: usize) -> usize {
   // We asked to count positions the tail visits at least once, so hashset
   let mut visited: HashSet<Coords> = HashSet::from([(0, 0)]);
 
-  let coordinated_moves = moves.into_iter().flat_map(Move::to_coords);
+  let coordinated_moves = moves.iter().flat_map(Move::to_coords);
 
   for (mx, my) in coordinated_moves {
     rope[0].0 += mx;
