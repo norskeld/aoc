@@ -12,8 +12,7 @@ use aoc::Solution;
 
 const INPUT: &str = include_str!("input.txt");
 
-/// `(dx, dy)`.
-type Coords = (isize, isize);
+type Coord = (isize, isize);
 
 #[derive(Debug)]
 enum ParseError {
@@ -30,7 +29,7 @@ enum Move {
 }
 
 impl Move {
-  fn to_coords(&self) -> Vec<Coords> {
+  fn to_coords(&self) -> Vec<Coord> {
     match *self {
       | Move::Up(steps) => vec![(0, 1); steps],
       | Move::Down(steps) => vec![(0, -1); steps],
@@ -64,14 +63,10 @@ impl FromStr for Move {
 }
 
 fn process(moves: &[Move], rope_len: usize) -> usize {
-  let mut rope: Vec<Coords> = vec![(0, 0); rope_len];
+  let mut rope: Vec<Coord> = vec![(0, 0); rope_len];
+  let mut visited: HashSet<Coord> = HashSet::from([(0, 0)]);
 
-  // We asked to count positions the tail visits at least once, so hashset
-  let mut visited: HashSet<Coords> = HashSet::from([(0, 0)]);
-
-  let coordinated_moves = moves.iter().flat_map(Move::to_coords);
-
-  for (mx, my) in coordinated_moves {
+  for (mx, my) in moves.iter().flat_map(Move::to_coords) {
     rope[0].0 += mx;
     rope[0].1 += my;
 
