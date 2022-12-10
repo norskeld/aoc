@@ -5,6 +5,7 @@
 use aoc::Printable;
 
 mod day_1;
+mod day_10;
 mod day_2;
 mod day_3;
 mod day_4;
@@ -25,6 +26,7 @@ fn main() {
     box day_7::solution(),
     box day_8::solution(),
     box day_9::solution(),
+    box day_10::solution(),
   ];
 
   aoc::print_solutions(&solutions);
