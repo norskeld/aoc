@@ -1,4 +1,4 @@
-//! Day 7: No Space Left On Device][link]
+//! [Day 7: No Space Left On Device][link]
 //!
 //! [link]: https://adventofcode.com/2022/day/7
 

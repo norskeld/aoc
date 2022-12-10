@@ -1,4 +1,4 @@
-//! Day 9: Rope Bridge][link]
+//! [Day 9: Rope Bridge][link]
 //!
 //! I believe implementing `FromStr` is a mistake here and parsing + populating moves could be done
 //! way more efficiently, but the current version will do too.

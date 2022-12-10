@@ -1,4 +1,4 @@
-//! Day 8: Treetop Tree House][link]
+//! [Day 8: Treetop Tree House][link]
 //!
 //! Playing with declarative macros, because why not. The overall perf and algo complexity is kinda
 //! nasty, something like `O(n^3)`, but it's whatever, since it does the job in 3-4 ms on the big
