@@ -3,7 +3,8 @@
 //!
 //! [link]: https://adventofcode.com/2022/day/12
 
-use std::{collections::VecDeque, ops::Range};
+use std::collections::VecDeque;
+use std::ops::Range;
 
 use aoc::Solution;
 
@@ -42,7 +43,7 @@ fn bfs(grid: &[Vec<u8>], start: &[(usize, usize)], goal: (usize, usize)) -> Opti
 fn parse_grid(input: &str) -> Grid {
   input
     .lines()
-    .map(|line| line.as_bytes().iter().copied().collect::<Vec<_>>())
+    .map(|line| line.as_bytes().to_vec())
     .collect::<Vec<_>>()
 }
 
