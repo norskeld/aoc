@@ -1,7 +1,3 @@
-#![allow(incomplete_features)]
-#![feature(adt_const_params)]
-#![feature(box_syntax)]
-
 use aoc::Printable;
 
 mod day_1;
@@ -19,18 +15,18 @@ mod day_9;
 
 fn main() {
   let solutions: Vec<Box<dyn Printable>> = vec![
-    box day_1::solution(),
-    box day_2::solution(),
-    box day_3::solution(),
-    box day_4::solution(),
-    box day_5::solution(),
-    box day_6::solution(),
-    box day_7::solution(),
-    box day_8::solution(),
-    box day_9::solution(),
-    box day_10::solution(),
-    box day_11::solution(),
-    box day_12::solution(),
+    Box::new(day_1::solution()),
+    Box::new(day_2::solution()),
+    Box::new(day_3::solution()),
+    Box::new(day_4::solution()),
+    Box::new(day_5::solution()),
+    Box::new(day_6::solution()),
+    Box::new(day_7::solution()),
+    Box::new(day_8::solution()),
+    Box::new(day_9::solution()),
+    Box::new(day_10::solution()),
+    Box::new(day_11::solution()),
+    Box::new(day_12::solution()),
   ];
 
   aoc::print_solutions(&solutions);

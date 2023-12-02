@@ -6,14 +6,9 @@ pub trait Printable {
   fn print(&self);
 }
 
-/// This enum is mostly for usage in const generics. This is nightly only + uncompleted feature, so
-/// requires:
-///
-/// ```ignore
-/// #![allow(incomplete_features)]
-/// #![feature(adt_const_params)]
+/// This enum is sometimes used to specify which part of the puzzle to solve.
 /// ```
-#[derive(PartialEq, Eq)]
+#[derive(Copy, Clone, PartialEq, Eq)]
 pub enum Part {
   One,
   Two,
