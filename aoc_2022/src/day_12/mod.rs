@@ -1,6 +1,5 @@
 //! [Day 12: Hill Climbing Algorithm][link]
 //!
-//!
 //! [link]: https://adventofcode.com/2022/day/12
 
 use std::collections::VecDeque;
@@ -28,7 +27,9 @@ fn bfs(grid: &[Vec<u8>], start: &[(usize, usize)], goal: (usize, usize)) -> Opti
 
     for (dx, dy) in [(0, -1), (-1, 0), (0, 1), (1, 0)] {
       let (nx, ny) = ((x as isize + dx) as usize, (y as isize + dy) as usize);
-      let Some(&square) = grid.get(nx).and_then(|row| row.get(ny)) else { continue };
+      let Some(&square) = grid.get(nx).and_then(|row| row.get(ny)) else {
+        continue;
+      };
 
       if grid[x][y] + 1 >= square && !visited[nx][ny] {
         visited[nx][ny] = true;
@@ -122,6 +123,6 @@ mod tests {
   #[test]
   fn test_input() {
     assert_eq!(solve_part_one(INPUT), 449);
-    assert_eq!(solve_part_two(INPUT), 0);
+    assert_eq!(solve_part_two(INPUT), 443);
   }
 }
