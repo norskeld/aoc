@@ -60,9 +60,6 @@ fn grid_sizes(grid: &Grid) -> Pair<Range<usize>> {
 }
 
 fn prepare_grid(mut grid: Grid) -> (Grid, Pair<usize>, Pair<usize>) {
-  // let rows = 0..grid.len();
-  // let cols = 0..grid[0].len();
-
   let (rows, cols) = grid_sizes(&grid);
 
   // Find `S`tart position.

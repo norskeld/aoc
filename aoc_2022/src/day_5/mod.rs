@@ -5,7 +5,7 @@
 use std::mem;
 use std::str;
 
-use aoc::{Part, Solution};
+use aoc::Solution;
 
 const INPUT: &str = include_str!("input.txt");
 
@@ -106,7 +106,7 @@ impl Move {
   }
 }
 
-fn solve<const P: Part>(s: &str) -> String {
+fn solve_common(s: &str) -> (Crates, Vec<Move>) {
   let mut lines = s.lines();
 
   let mut crates = lines
@@ -116,19 +116,39 @@ fn solve<const P: Part>(s: &str) -> String {
 
   crates.table.iter_mut().for_each(|stack| stack.reverse());
 
-  let mut it = lines.filter(|s| !s.is_empty()).map(Move::from_line);
+  let moves = lines
+    .filter(|s| !s.is_empty())
+    .map(Move::from_line)
+    .collect::<Vec<_>>();
 
-  match P {
-    | Part::One => it.by_ref().fold(&mut crates, Crates::run).top(),
-    | Part::Two => it.by_ref().fold(&mut crates, Crates::run_preserving).top(),
-  }
+  (crates, moves)
+
+  // match P {
+  //   | Part::One => it.by_ref().fold(&mut crates, Crates::run).top(),
+  //   | Part::Two => it.by_ref().fold(&mut crates, Crates::run_preserving).top(),
+  // }
+}
+
+fn solve_part_one(s: &str) -> String {
+  let (mut crates, moves) = solve_common(s);
+
+  moves.into_iter().fold(&mut crates, Crates::run).top()
+}
+
+fn solve_part_two(s: &str) -> String {
+  let (mut crates, moves) = solve_common(s);
+
+  moves
+    .into_iter()
+    .fold(&mut crates, Crates::run_preserving)
+    .top()
 }
 
 pub fn solution<'s>() -> Solution<'s, String, String> {
   Solution {
     title: "Day 5: Supply Stacks",
-    part_one: solve::<{ Part::One }>(INPUT),
-    part_two: solve::<{ Part::Two }>(INPUT),
+    part_one: solve_part_one(INPUT),
+    part_two: solve_part_two(INPUT),
   }
 }
 
@@ -140,13 +160,13 @@ mod tests {
 
   #[test]
   fn test_examples() {
-    assert_eq!(solve::<{ Part::One }>(EXAMPLE), "CMZ".to_string());
-    assert_eq!(solve::<{ Part::Two }>(EXAMPLE), "MCD".to_string());
+    assert_eq!(solve_part_one(EXAMPLE), "CMZ".to_string());
+    assert_eq!(solve_part_two(EXAMPLE), "MCD".to_string());
   }
 
   #[test]
   fn test_input() {
-    assert_eq!(solve::<{ Part::One }>(INPUT), "ZRLJGSCTR".to_string());
-    assert_eq!(solve::<{ Part::Two }>(INPUT), "PRTTGRFPB".to_string());
+    assert_eq!(solve_part_one(INPUT), "ZRLJGSCTR".to_string());
+    assert_eq!(solve_part_two(INPUT), "PRTTGRFPB".to_string());
   }
 }

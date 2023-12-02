@@ -1,8 +1,5 @@
 //! [Day 4: Camp Cleanup][link]
 //!
-//! Const generics are completely unnecessary here, and overall it could be reduced to something
-//! like 80 loc, but...
-//!
 //! [link]: https://adventofcode.com/2022/day/4
 
 use std::ops::RangeInclusive;
@@ -102,35 +99,50 @@ impl FromStr for Assignment {
 }
 
 #[derive(Default)]
-struct Output<const P: Part> {
+struct Output {
   result: usize,
 }
 
-impl<const P: Part> FromIterator<Assignment> for Output<P> {
+impl FromIterator<(Part, Assignment)> for Output {
   fn from_iter<I>(it: I) -> Self
   where
-    I: IntoIterator<Item = Assignment>,
+    I: IntoIterator<Item = (Part, Assignment)>,
   {
-    it.into_iter()
-      .fold(Self::default(), |mut acc, Assignment(first, second)| {
-        let add = match P {
+    it.into_iter().fold(
+      Self::default(),
+      |mut acc, (part, Assignment(first, second))| {
+        let add = match part {
           | Part::One => first.subsumes(&second),
           | Part::Two => first.overlaps(&second),
         };
 
         acc.result += add as usize;
         acc
-      })
+      },
+    )
   }
 }
 
-fn solve<const P: Part>(s: &str) -> usize {
+fn solve_part_one(s: &str) -> usize {
   let output = s
     .lines()
     .into_iter()
     .map(str::parse::<Assignment>)
     .map(Result::unwrap)
-    .collect::<Output<P>>();
+    .map(|assignment| (Part::One, assignment))
+    .collect::<Output>();
+
+  output.result
+}
+
+fn solve_part_two(s: &str) -> usize {
+  let output = s
+    .lines()
+    .into_iter()
+    .map(str::parse::<Assignment>)
+    .map(Result::unwrap)
+    .map(|assignment| (Part::Two, assignment))
+    .collect::<Output>();
 
   output.result
 }
@@ -138,8 +150,8 @@ fn solve<const P: Part>(s: &str) -> usize {
 pub fn solution<'s>() -> Solution<'s, usize, usize> {
   Solution {
     title: "Day 4: Camp Cleanup",
-    part_one: solve::<{ Part::One }>(INPUT),
-    part_two: solve::<{ Part::Two }>(INPUT),
+    part_one: solve_part_one(INPUT),
+    part_two: solve_part_two(INPUT),
   }
 }
 
@@ -151,13 +163,13 @@ mod tests {
 
   #[test]
   fn test_examples() {
-    assert_eq!(solve::<{ Part::One }>(EXAMPLE), 2);
-    assert_eq!(solve::<{ Part::Two }>(EXAMPLE), 4);
+    assert_eq!(solve_part_one(EXAMPLE), 2);
+    assert_eq!(solve_part_two(EXAMPLE), 4);
   }
 
   #[test]
   fn test_input() {
-    assert_eq!(solve::<{ Part::One }>(INPUT), 536);
-    assert_eq!(solve::<{ Part::Two }>(INPUT), 845);
+    assert_eq!(solve_part_one(INPUT), 536);
+    assert_eq!(solve_part_two(INPUT), 845);
   }
 }

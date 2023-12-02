@@ -5,7 +5,7 @@
 use std::path::PathBuf;
 use std::{collections::HashMap, path::Path};
 
-use aoc::{Part, Solution};
+use aoc::Solution;
 
 const INPUT: &str = include_str!("input.txt");
 
@@ -42,36 +42,35 @@ fn collect_sizes(input: &str) -> HashMap<PathBuf, usize> {
   sizes
 }
 
-fn solve<const P: Part>(input: &str) -> usize {
+fn solve_part_one(input: &str) -> usize {
+  const SIZE_LIMIT: usize = 100_000;
+
   let sizes = collect_sizes(input);
 
-  match P {
-    | Part::One => {
-      const SIZE_LIMIT: usize = 100_000;
+  sizes.into_values().filter(|size| *size <= SIZE_LIMIT).sum()
+}
 
-      sizes.into_values().filter(|size| *size <= SIZE_LIMIT).sum()
-    },
-    | Part::Two => {
-      const DISK_SPACE: usize = 70_000_000;
-      const UNUSED_SPACE: usize = 30_000_000;
+fn solve_part_two(input: &str) -> usize {
+  const DISK_SPACE: usize = 70_000_000;
+  const UNUSED_SPACE: usize = 30_000_000;
 
-      let root = sizes.get(Path::new("/")).unwrap();
-      let available = DISK_SPACE - root;
+  let sizes = collect_sizes(input);
 
-      sizes
-        .into_values()
-        .filter(|size| (available + size) >= UNUSED_SPACE)
-        .min()
-        .unwrap_or_default()
-    },
-  }
+  let root = sizes.get(Path::new("/")).unwrap();
+  let available = DISK_SPACE - root;
+
+  sizes
+    .into_values()
+    .filter(|size| (available + size) >= UNUSED_SPACE)
+    .min()
+    .unwrap_or_default()
 }
 
 pub fn solution<'s>() -> Solution<'s, usize, usize> {
   Solution {
     title: "Day 7: No Space Left On Device",
-    part_one: solve::<{ Part::One }>(INPUT),
-    part_two: solve::<{ Part::Two }>(INPUT),
+    part_one: solve_part_one(INPUT),
+    part_two: solve_part_two(INPUT),
   }
 }
 
@@ -83,13 +82,13 @@ mod tests {
 
   #[test]
   fn test_examples() {
-    assert_eq!(solve::<{ Part::One }>(EXAMPLE), 95437);
-    assert_eq!(solve::<{ Part::Two }>(EXAMPLE), 24933642);
+    assert_eq!(solve_part_one(EXAMPLE), 95437);
+    assert_eq!(solve_part_two(EXAMPLE), 24933642);
   }
 
   #[test]
   fn test_input() {
-    assert_eq!(solve::<{ Part::One }>(INPUT), 2104783);
-    assert_eq!(solve::<{ Part::Two }>(INPUT), 5883165);
+    assert_eq!(solve_part_one(INPUT), 2104783);
+    assert_eq!(solve_part_two(INPUT), 5883165);
   }
 }
