@@ -7,7 +7,6 @@ pub trait Printable {
 }
 
 /// This enum is sometimes used to specify which part of the puzzle to solve.
-/// ```
 #[derive(Copy, Clone, PartialEq, Eq)]
 pub enum Part {
   One,
