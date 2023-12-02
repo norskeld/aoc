@@ -97,37 +97,37 @@ impl TryFrom<&u8> for Shape {
   }
 }
 
-struct Round<const P: Part> {
+struct Round {
   shape: Shape,
   outcome: Outcome,
 }
 
-impl<const P: Part> TryFrom<&[u8]> for Round<P> {
-  type Error = ParseError;
+impl Round {
+  fn try_parse_for(part: Part) -> impl Fn(&[u8]) -> Result<Self, ParseError> {
+    move |bytes| {
+      match bytes {
+        | [left, .., right] => {
+          let (shape, outcome) = match part {
+            | Part::One => {
+              let opponent = Shape::try_from(left)?;
+              let shape = Shape::try_from(right)?;
+              let outcome = opponent.to_outcome(&shape);
 
-  fn try_from(s: &[u8]) -> Result<Self, ParseError> {
-    match s {
-      | [left, .., right] => {
-        let (shape, outcome) = match P {
-          | Part::One => {
-            let opponent = Shape::try_from(left)?;
-            let shape = Shape::try_from(right)?;
-            let outcome = opponent.to_outcome(&shape);
+              (shape, outcome)
+            },
+            | Part::Two => {
+              let outcome = Outcome::try_from(right)?;
+              let opponent = Shape::try_from(left)?;
+              let shape = opponent.with_outcome(&outcome);
 
-            (shape, outcome)
-          },
-          | Part::Two => {
-            let outcome = Outcome::try_from(right)?;
-            let opponent = Shape::try_from(left)?;
-            let shape = opponent.with_outcome(&outcome);
+              (shape, outcome)
+            },
+          };
 
-            (shape, outcome)
-          },
-        };
-
-        Ok(Round { shape, outcome })
-      },
-      | _ => Err(ParseError::InvalidRound),
+          Ok(Round { shape, outcome })
+        },
+        | _ => Err(ParseError::InvalidRound),
+      }
     }
   }
 }
@@ -137,24 +137,35 @@ struct Output {
   result: usize,
 }
 
-impl<const P: Part> FromIterator<Round<P>> for Output {
+impl FromIterator<Round> for Output {
   fn from_iter<I>(it: I) -> Self
   where
-    I: IntoIterator<Item = Round<P>>,
+    I: IntoIterator<Item = Round>,
   {
     it.into_iter()
-      .fold(Self::default(), |mut acc, Round { outcome, shape }| {
+      .fold(Self::default(), |mut acc, Round { outcome, shape, .. }| {
         acc.result += outcome as usize + shape as usize;
         acc
       })
   }
 }
 
-fn solve<const P: Part>(input: &str) -> usize {
+fn solve_part_one(input: &str) -> usize {
   let output = input
     .lines()
     .map(str::as_bytes)
-    .map(Round::<P>::try_from)
+    .map(Round::try_parse_for(Part::One))
+    .map(Result::unwrap)
+    .collect::<Output>();
+
+  output.result
+}
+
+fn solve_part_two(input: &str) -> usize {
+  let output = input
+    .lines()
+    .map(str::as_bytes)
+    .map(Round::try_parse_for(Part::Two))
     .map(Result::unwrap)
     .collect::<Output>();
 
@@ -164,8 +175,8 @@ fn solve<const P: Part>(input: &str) -> usize {
 pub fn solution<'s>() -> Solution<'s, usize, usize> {
   Solution {
     title: "Day 2: Rock Paper Scissors",
-    part_one: solve::<{ Part::One }>(INPUT),
-    part_two: solve::<{ Part::Two }>(INPUT),
+    part_one: solve_part_one(INPUT),
+    part_two: solve_part_two(INPUT),
   }
 }
 
@@ -177,13 +188,13 @@ mod tests {
 
   #[test]
   fn test_examples() {
-    assert_eq!(solve::<{ Part::One }>(EXAMPLE), 15);
-    assert_eq!(solve::<{ Part::Two }>(EXAMPLE), 12);
+    assert_eq!(solve_part_one(EXAMPLE), 15);
+    assert_eq!(solve_part_two(EXAMPLE), 12);
   }
 
   #[test]
   fn test_input() {
-    assert_eq!(solve::<{ Part::One }>(INPUT), 11063);
-    assert_eq!(solve::<{ Part::Two }>(INPUT), 10349);
+    assert_eq!(solve_part_one(INPUT), 11063);
+    assert_eq!(solve_part_two(INPUT), 10349);
   }
 }
