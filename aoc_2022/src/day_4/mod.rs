@@ -126,7 +126,6 @@ impl FromIterator<(Part, Assignment)> for Output {
 fn solve_part_one(s: &str) -> usize {
   let output = s
     .lines()
-    .into_iter()
     .map(str::parse::<Assignment>)
     .map(Result::unwrap)
     .map(|assignment| (Part::One, assignment))
@@ -138,7 +137,6 @@ fn solve_part_one(s: &str) -> usize {
 fn solve_part_two(s: &str) -> usize {
   let output = s
     .lines()
-    .into_iter()
     .map(str::parse::<Assignment>)
     .map(Result::unwrap)
     .map(|assignment| (Part::Two, assignment))
