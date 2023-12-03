@@ -2,6 +2,11 @@
 members = ["aoc", "aoc_2022", "aoc_2023"]
 resolver = "2"
 
+[workspace.dependencies]
+aoc = { path = "./aoc" }
+chumsky = { version = "0.9.3" }
+indoc = { version = "2.0.4" }
+
 [profile.release]
 lto = "thin"
 opt-level = "s"

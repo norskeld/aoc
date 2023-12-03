@@ -4,5 +4,6 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-aoc = { path = "../aoc" }
-indoc = "1.0.7"
+aoc = { workspace = true }
+chumsky = { workspace = true }
+indoc = { workspace = true }
