@@ -94,8 +94,8 @@ fn solve_part_one(input: &str) -> u32 {
   for line in input.lines() {
     let id = line
       .chars()
-      .skip_while(|ch| !ch.is_digit(10)) // Skip prefix
-      .take_while(|ch| ch.is_digit(10)) // Consume id
+      .skip_while(|ch| !ch.is_ascii_digit()) // Skip prefix
+      .take_while(|ch| ch.is_ascii_digit()) // Consume id
       .collect::<String>()
       .parse::<u32>()
       .unwrap_or_default();
@@ -128,8 +128,8 @@ fn solve_part_two(input: &str) -> u32 {
   for line in input.lines() {
     let _ = line
       .chars()
-      .skip_while(|ch| !ch.is_digit(10)) // Skip prefix
-      .take_while(|ch| ch.is_digit(10)) // Consume id
+      .skip_while(|ch| !ch.is_ascii_digit()) // Skip prefix
+      .take_while(|ch| ch.is_ascii_digit()) // Consume id
       .collect::<String>()
       .parse::<u32>()
       .unwrap_or_default();
@@ -144,8 +144,7 @@ fn solve_part_two(input: &str) -> u32 {
       .trim()
       .split(';')
       .filter_map(|val| val.parse::<Set>().ok())
-      .map(|set| set.cubes)
-      .flatten();
+      .flat_map(|set| set.cubes);
 
     let mut mreds = 0;
     let mut mgreens = 0;
