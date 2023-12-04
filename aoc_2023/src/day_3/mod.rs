@@ -54,7 +54,7 @@ impl Token {
         let other = token.span();
 
         match check {
-          | Check::Inclusive => span.start < other.end && other.start <= span.end - 1,
+          | Check::Inclusive => span.start < other.end && other.start < span.end,
           | Check::Exclusive => span.start < other.end && other.start < span.end - 1,
         }
       } else {
