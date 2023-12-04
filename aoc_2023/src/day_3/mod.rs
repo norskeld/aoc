@@ -82,13 +82,13 @@ fn parse(line: &str) -> Vec<Token> {
 }
 
 #[inline]
-fn has_adjacents_at(board: &Vec<Vec<Token>>, row: usize, token: &Token) -> bool {
+fn has_adjacents_at(board: &[Vec<Token>], row: usize, token: &Token) -> bool {
   board.get(row).map_or(false, |tokens| {
     token.overlaps_with(tokens, Check::Exclusive)
   })
 }
 
-fn has_adjacents(board: &Vec<Vec<Token>>, row: usize, token: &Token) -> bool {
+fn has_adjacents(board: &[Vec<Token>], row: usize, token: &Token) -> bool {
   let span = token.span();
 
   let col_min = span.start.saturating_sub(1);
@@ -96,9 +96,9 @@ fn has_adjacents(board: &Vec<Vec<Token>>, row: usize, token: &Token) -> bool {
 
   let token = token.with_span(col_min..col_max);
 
-  has_adjacents_at(&board, row, &token)
-    || has_adjacents_at(&board, row + 1, &token)
-    || has_adjacents_at(&board, row.saturating_sub(1), &token)
+  has_adjacents_at(board, row, &token)
+    || has_adjacents_at(board, row + 1, &token)
+    || has_adjacents_at(board, row.saturating_sub(1), &token)
 }
 
 fn solve_part_one(input: &str) -> u32 {
@@ -122,7 +122,7 @@ fn solve_part_one(input: &str) -> u32 {
   result
 }
 
-fn find_gear_parts(board: &Vec<Vec<Token>>, row: usize, token: &Token) -> Option<(Token, Token)> {
+fn find_gear_parts(board: &[Vec<Token>], row: usize, token: &Token) -> Option<(Token, Token)> {
   let span = token.span();
 
   // So we stumbled a star symbol and should find exactly 2 numbers adjacent to it. They can be
