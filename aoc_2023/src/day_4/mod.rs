@@ -2,6 +2,7 @@
 //!
 //! [link]: https://adventofcode.com/2023/day/4
 
+use std::cmp::min;
 use std::collections::HashSet;
 
 use aoc::Solution;
@@ -59,8 +60,20 @@ fn solve_part_one(input: &str) -> u32 {
   result
 }
 
-fn solve_part_two(_input: &str) -> u32 {
-  0
+fn solve_part_two(input: &str) -> u32 {
+  let cards: Vec<Card> = input.lines().filter_map(parse).collect();
+  let mut totals = vec![1; cards.len()];
+
+  for idx in 1..cards.len() {
+    let card = &cards[idx - 1];
+    let points = card.points();
+
+    for x in idx..min(totals.len(), idx + (points as usize)) {
+      totals[x] += totals[idx - 1];
+    }
+  }
+
+  totals.iter().sum()
 }
 
 pub fn solution<'s>() -> Solution<'s, u32, u32> {
@@ -80,12 +93,12 @@ mod tests {
   #[test]
   fn test_examples() {
     assert_eq!(solve_part_one(EXAMPLE), 13);
-    // assert_eq!(solve_part_two(EXAMPLE), 30);
+    assert_eq!(solve_part_two(EXAMPLE), 30);
   }
 
   #[test]
   fn test_input() {
-    // assert_eq!(solve_part_one(INPUT), 0);
-    // assert_eq!(solve_part_two(INPUT), 0);
+    assert_eq!(solve_part_one(INPUT), 32001);
+    assert_eq!(solve_part_two(INPUT), 5037841);
   }
 }
