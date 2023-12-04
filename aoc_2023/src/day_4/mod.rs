@@ -46,13 +46,17 @@ fn parse(input: &str) -> Option<Card> {
 }
 
 fn solve_part_one(input: &str) -> u32 {
-  input
-    .lines()
-    .filter_map(parse)
-    .map(|card| card.points())
-    .filter(|&n| n > 0)
-    .map(|n| 2u32.pow(n - 1))
-    .sum()
+  let mut result = 0;
+
+  for card in input.lines().filter_map(parse) {
+    let points = card.points();
+
+    if points > 0 {
+      result += 2u32.pow(points - 1);
+    }
+  }
+
+  result
 }
 
 fn solve_part_two(_input: &str) -> u32 {
