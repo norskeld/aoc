@@ -72,7 +72,7 @@ fn parse(line: &str) -> Vec<Token> {
 
   let symbol = choice::<_, Simple<char>>((dot, number))
     .not()
-    .map_with_span(|kind, span| Token::Symbol(kind, span));
+    .map_with_span(Token::Symbol);
 
   let parser = choice::<_, Simple<char>>((number, dot, symbol))
     .repeated()
