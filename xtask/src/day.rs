@@ -13,6 +13,8 @@ const MOD_TEMPLATE: &str = indoc! {r#"
 
   use aoc::Solution;
 
+  const INPUT: &str = include_str!("input.txt");
+
   fn solve_part_one(_input: &str) -> u32 {
     0
   }
